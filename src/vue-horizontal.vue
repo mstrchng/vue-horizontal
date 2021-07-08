@@ -1,40 +1,67 @@
 <template>
-  <div class="vue-horizontal" style="position: relative; display: flex;">
-    <div class="v-hl-btn v-hl-btn-prev" v-if="button && hasPrev" @click.stop="prev" role="button"
-         :class="{'v-hl-btn-between': buttonBetween}">
+  <div class="vue-horizontal" style="position: relative; display: flex">
+    <div
+      class="v-hl-btn v-hl-btn-prev"
+      v-if="button && hasPrev"
+      @click.stop="prev"
+      role="button"
+      :class="{ 'v-hl-btn-between': buttonBetween }"
+    >
       <slot name="btn-prev">
-        <svg class="v-hl-svg" viewBox="0 0 24 24" aria-label="horizontal scroll area navigate to previous button">
-          <path d="m9.8 12 5 5a1 1 0 1 1-1.4 1.4l-5.7-5.7a1 1 0 0 1 0-1.4l5.7-5.7a1 1 0 0 1 1.4 1.4l-5 5z"/>
+        <svg
+          class="v-hl-svg"
+          viewBox="0 0 24 24"
+          aria-label="horizontal scroll area navigate to previous button"
+        >
+          <path
+            d="m9.8 12 5 5a1 1 0 1 1-1.4 1.4l-5.7-5.7a1 1 0 0 1 0-1.4l5.7-5.7a1 1 0 0 1 1.4 1.4l-5 5z"
+          />
         </svg>
       </slot>
     </div>
 
-    <div class="v-hl-btn v-hl-btn-next" v-if="button && hasNext" @click.stop="next" role="button"
-         :class="{'v-hl-btn-between': buttonBetween}">
+    <div
+      class="v-hl-btn v-hl-btn-next"
+      v-if="button && hasNext"
+      @click.stop="next"
+      role="button"
+      :class="{ 'v-hl-btn-between': buttonBetween }"
+    >
       <slot name="btn-next">
-        <svg class="v-hl-svg" viewBox="0 0 24 24" aria-label="horizontal scroll area navigate to next button">
-          <path d="m14.3 12.1-5-5a1 1 0 0 1 1.4-1.4l5.7 5.7a1 1 0 0 1 0 1.4l-5.7 5.7a1 1 0 0 1-1.4-1.4l5-5z"/>
+        <svg
+          class="v-hl-svg"
+          viewBox="0 0 24 24"
+          aria-label="horizontal scroll area navigate to next button"
+        >
+          <path
+            d="m14.3 12.1-5-5a1 1 0 0 1 1.4-1.4l5.7 5.7a1 1 0 0 1 0 1.4l-5.7 5.7a1 1 0 0 1-1.4-1.4l5-5z"
+          />
         </svg>
       </slot>
     </div>
 
-    <div class="v-hl-container" ref="container" @scroll.passive="onScroll" :class="{
-      'v-hl-responsive': responsive,
-      'v-hl-scroll': scroll,
-      'v-hl-snap-start': snap === 'start',
-      'v-hl-snap-center': snap === 'center',
-      'v-hl-snap-end': snap === 'end',
-    }">
+    <div
+      class="v-hl-container"
+      ref="container"
+      @scroll.passive="onScroll"
+      :class="{
+        'v-hl-responsive': responsive,
+        'v-hl-scroll': scroll,
+        'v-hl-snap-start': snap === 'start',
+        'v-hl-snap-center': snap === 'center',
+        'v-hl-snap-end': snap === 'end',
+      }"
+    >
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from "vue";
 
 // Compatibility delta due to rounding issues
-const delta = 2.5
+const delta = 2.5;
 
 interface VueHorizontalData {
   left: number;
@@ -48,7 +75,7 @@ interface VueHorizontalData {
 }
 
 export default Vue.extend({
-  name: 'VueHorizontal',
+  name: "VueHorizontal",
   data(): VueHorizontalData {
     return {
       left: 0,
@@ -59,7 +86,7 @@ export default Vue.extend({
       hasNext: false,
 
       debounceId: undefined,
-    }
+    };
   },
   props: {
     /**
@@ -74,7 +101,7 @@ export default Vue.extend({
      */
     buttonBetween: {
       type: Boolean,
-      default: () => true
+      default: () => true,
     },
     /**
      * Scrollbar visibility
@@ -95,47 +122,47 @@ export default Vue.extend({
      */
     displacement: {
       type: Number,
-      default: () => 1.0
+      default: () => 1.0,
     },
     /**
      * Snap to start|center|end
      */
     snap: {
       type: String,
-      default: () => 'start',
+      default: () => "start",
     },
   },
   mounted() {
-    this.onScrollDebounce();
+    // this.onScrollDebounce();
   },
   beforeDestroy() {
-    clearTimeout(this.debounceId)
+    clearTimeout(this.debounceId);
   },
   methods: {
     children(): HTMLCollection {
-      const container = this.$refs.container as Element
-      return container.children
+      const container = this.$refs.container as Element;
+      return container.children;
     },
     findPrevSlot(x: number): Element | undefined {
-      const children = this.children()
+      const children = this.children();
 
       for (let i = 0; i < children.length; i++) {
-        const rect = children[i].getBoundingClientRect()
+        const rect = children[i].getBoundingClientRect();
 
         if (rect.left <= x && x <= rect.right) {
-          return children[i]
+          return children[i];
         }
 
         if (x <= rect.left) {
-          return children[i]
+          return children[i];
         }
       }
     },
     findNextSlot(x: number): Element | undefined {
-      const children = this.children()
+      const children = this.children();
 
       for (let i = 0; i < children.length; i++) {
-        const rect = children[i].getBoundingClientRect()
+        const rect = children[i].getBoundingClientRect();
 
         if (rect.right <= x) {
           continue;
@@ -152,57 +179,57 @@ export default Vue.extend({
      * Toggle and scroll to the previous set of horizontal content.
      */
     prev(): void {
-      this.$emit('prev')
+      this.$emit("prev");
 
-      const container = this.$refs.container as Element
-      const left = container.getBoundingClientRect().left
-      const x = left + (container.clientWidth * -this.displacement) - delta
-      const element = this.findPrevSlot(x)
+      const container = this.$refs.container as Element;
+      const left = container.getBoundingClientRect().left;
+      const x = left + container.clientWidth * -this.displacement - delta;
+      const element = this.findPrevSlot(x);
 
       if (element) {
-        const width = element.getBoundingClientRect().left - left
-        this.scrollToLeft(container.scrollLeft + width)
-        return
+        const width = element.getBoundingClientRect().left - left;
+        this.scrollToLeft(container.scrollLeft + width);
+        return;
       }
 
-      const width = container.clientWidth * this.displacement
-      this.scrollToLeft(container.scrollLeft - width)
+      const width = container.clientWidth * this.displacement;
+      this.scrollToLeft(container.scrollLeft - width);
     },
     /**
      * Toggle and scroll to the next set of horizontal content.
      */
     next(): void {
-      this.$emit('next')
+      this.$emit("next");
 
-      const container = this.$refs.container as Element
-      const left = container.getBoundingClientRect().left
-      const x = left + (container.clientWidth * this.displacement) + delta
-      const element = this.findNextSlot(x)
+      const container = this.$refs.container as Element;
+      const left = container.getBoundingClientRect().left;
+      const x = left + container.clientWidth * this.displacement + delta;
+      const element = this.findNextSlot(x);
 
       if (element) {
-        const width = element.getBoundingClientRect().left - left
+        const width = element.getBoundingClientRect().left - left;
         if (width > delta) {
-          this.scrollToLeft(container.scrollLeft + width)
-          return
+          this.scrollToLeft(container.scrollLeft + width);
+          return;
         }
       }
 
-      const width = container.clientWidth * this.displacement
-      this.scrollToLeft(container.scrollLeft + width)
+      const width = container.clientWidth * this.displacement;
+      this.scrollToLeft(container.scrollLeft + width);
     },
     /**
      * Index of the slots to scroll to.
      * @param i index
      */
     scrollToIndex(i: number): void {
-      const children = this.children()
+      const children = this.children();
 
       if (children[i]) {
-        const container = this.$refs.container as Element
-        const rect = children[i].getBoundingClientRect()
+        const container = this.$refs.container as Element;
+        const rect = children[i].getBoundingClientRect();
 
-        const left = rect.left - container.getBoundingClientRect().left
-        this.scrollToLeft(container.scrollLeft + left)
+        const left = rect.left - container.getBoundingClientRect().left;
+        this.scrollToLeft(container.scrollLeft + left);
       }
     },
     /**
@@ -211,18 +238,18 @@ export default Vue.extend({
      * @param behavior smooth|auto
      */
     scrollToLeft(left: number, behavior: "smooth" | "auto" = "smooth"): void {
-      const element = this.$refs.container as Element
-      element.scrollTo({left: left, behavior: behavior});
+      const element = this.$refs.container as Element;
+      element.scrollTo({ left: left, behavior: behavior });
     },
     onScroll(): void {
-      const container = this.$refs.container as Element
+      const container = this.$refs.container as Element;
 
       // Resolves https://github.com/fuxingloh/vue-horizontal/issues/99#issue-862691647
       if (!container) return;
 
-      this.$emit('scroll', {
+      this.$emit("scroll", {
         left: container.scrollLeft,
-      })
+      });
 
       clearTimeout(this.debounceId);
       // @ts-ignore
@@ -230,8 +257,8 @@ export default Vue.extend({
     },
     onScrollDebounce(): void {
       this.refresh((data) => {
-        this.$emit('scroll-debounce', data)
-      })
+        this.$emit("scroll-debounce", data);
+      });
     },
     /**
      * Manually refresh vue-horizontal
@@ -239,23 +266,26 @@ export default Vue.extend({
      */
     refresh(callback: (data: VueHorizontalData) => void): void {
       this.$nextTick(() => {
-        const data = this.calculate()
+        const data = this.calculate();
 
-        this.left = data.left
-        this.width = data.width
-        this.scrollWidth = data.scrollWidth
-        this.hasNext = data.hasNext
-        this.hasPrev = data.hasPrev
+        this.left = data.left;
+        this.width = data.width;
+        this.scrollWidth = data.scrollWidth;
+        this.hasNext = data.hasNext;
+        this.hasPrev = data.hasPrev;
 
-        callback(data)
-      })
+        callback(data);
+      });
     },
     calculate(): VueHorizontalData {
-      const container = this.$refs.container as Element
-      const firstChild = this.children()[0]
+      const container = this.$refs.container as Element;
+      const firstChild = this.children()[0];
 
       function hasNext(): boolean {
-        return container.scrollWidth > container.scrollLeft + container.clientWidth + delta
+        return (
+          container.scrollWidth >
+          container.scrollLeft + container.clientWidth + delta
+        );
       }
 
       function hasPrev(): boolean {
@@ -263,8 +293,8 @@ export default Vue.extend({
           return false;
         }
 
-        const containerVWLeft = container.getBoundingClientRect().left
-        const firstChildLeft = firstChild?.getBoundingClientRect()?.left ?? 0
+        const containerVWLeft = container.getBoundingClientRect().left;
+        const firstChildLeft = firstChild?.getBoundingClientRect()?.left ?? 0;
         return Math.abs(containerVWLeft - firstChildLeft) >= delta;
       }
 
@@ -274,7 +304,7 @@ export default Vue.extend({
         scrollWidth: container.scrollWidth,
         hasNext: hasNext(),
         hasPrev: hasPrev(),
-      }
+      };
     },
   },
 });
